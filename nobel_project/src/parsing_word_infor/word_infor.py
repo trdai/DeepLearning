@@ -3,11 +3,27 @@ import json
 import re
 from docx import Document
 from pathlib import Path
+import pandas as pd
 
 class WordInfor:
     def __init__(self, folder_path):
         self.folder_path = folder_path
         self.all_people = []
+
+    def export_interviews_to_csv(self, output_csv):
+        rows = []
+        for person in self.all_people:
+            pid = person.get("id", "")
+            for qa in person.get("Interview", []):
+                rows.append({
+                    "Question": qa.get("question", ""),
+                    "Response": qa.get("answer", ""),
+                    "Author ID": pid
+                })
+
+        df = pd.DataFrame(rows, columns=["Question", "Response", "Author ID"])
+        df.to_csv(output_csv, index=False, encoding="utf-8-sig", sep=";")
+
     def parse_word_files(self):
 
         # Gom tất cả người
@@ -74,3 +90,5 @@ if __name__ == "__main__":
     word = WordInfor(word_folder)
     word.parse_word_files()
     word.all_people
+    output_csv = "./input/processed/interviews.csv"
+    word.export_interviews_to_csv(output_csv)
