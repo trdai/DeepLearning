@@ -7,24 +7,22 @@ from pathlib import Path
 class WordInfor:
     def __init__(self, folder_path):
         self.folder_path = folder_path
-
+        self.all_people = []
     def parse_word_files(self):
 
         # Gom tất cả người
-        all_people = []
         for file in os.listdir(self.folder_path):
             if file.endswith(".docx"):
                 #person = self._parse_word_file(self.folder_path + "/" + file)
-                all_people = self._parse_word_file(self.folder_path + "/" + file, all_people)
-                all_people
+                self._parse_word_file(self.folder_path + "/" + file)
 
         
         # Xuất JSON
         output_file = self.folder_path + "/../processed/nobel_people.json"
         with open(output_file, "w", encoding="utf-8") as f:
-            json.dump(all_people, f, ensure_ascii=False, indent=2)
+            json.dump(self.all_people, f, ensure_ascii=False, indent=2)
    
-    def _parse_word_file(self, path, all_people):
+    def _parse_word_file(self, path):
         doc = Document(path)
 
         current = None
@@ -42,7 +40,7 @@ class WordInfor:
                 if key.lower().startswith("id"):
                     # lưu người cũ nếu có
                     if current:
-                        all_people.append(current)
+                        self.all_people.append(current)
                     current = {"id": value, "Interview": []}
                     last_question = None
                     continue
@@ -68,12 +66,11 @@ class WordInfor:
 
         # Lưu người cuối cùng
         if current:
-            all_people.append(current)
-
-        return all_people
+            self.all_people.append(current)
 
 if __name__ == "__main__":
     # Define word infor
     word_folder = "./input/word"
     word = WordInfor(word_folder)
     word.parse_word_files()
+    word.all_people
