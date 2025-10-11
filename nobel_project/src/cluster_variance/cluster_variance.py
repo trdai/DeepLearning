@@ -7,14 +7,16 @@ class ClusterVariance:
             self.embeddings = json.load(f)
 
     def compute_variance(self):
-        # gom theo từng category
+        # Gom tất cả vector của mọi người theo category
         cat_vectors = {}
+
         for pid, cats in self.embeddings.items():
-            for cat, vec in cats.items():
-                v = np.array(vec)
-                if cat not in cat_vectors:
-                    cat_vectors[cat] = []
-                cat_vectors[cat].append(v)
+            for cat, vectors in cats.items():
+                for vec in vectors:
+                    v = np.array(vec)
+                    if cat not in cat_vectors:
+                        cat_vectors[cat] = []
+                    cat_vectors[cat].append(v)
 
         results = {}
         for cat, vectors in cat_vectors.items():
@@ -24,7 +26,7 @@ class ClusterVariance:
             results[cat] = {
                 "variance": float(var),
                 "mean_vector": mean_vec.tolist(),
-                "num_winners": len(vectors)
+                "num_vectors": len(vectors)
             }
 
         return results
@@ -34,6 +36,7 @@ class ClusterVariance:
         with open(output_path, "w", encoding="utf-8") as f:
             json.dump(results, f, ensure_ascii=False, indent=2)
         print(f">> Saved variance results at {output_path}")
+
 
 if __name__ == "__main__":
     embedding_file = "./input/processed/winner_embeddings.json"
