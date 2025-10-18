@@ -16,7 +16,7 @@ class ExcelInfor:
     def parsing_excel_sheets(self):
         print(type(self._sheet), self._sheet)
         # Một số token rác hay gặp (bạn có thể bổ sung nếu thấy token khác)
-        trash_tokens = {"9999", "n/a", "na", "none", "-", "--", "...", "&nbsp;"}
+        trash_tokens = {"9999", "n/a", "na", "none", "-", "--", "...", "nan","&nbsp;"}
         for sheet in self._sheet:
             df = pd.read_excel(self._file_path, sheet_name=sheet)
 

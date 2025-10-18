@@ -69,6 +69,9 @@ class WordInfor:
                     last_question = value
                 # Nếu không có key (hoặc key không phải Q) nhưng vừa có question trước đó => đây là answer
                 elif last_question:
+                    if not value:
+                        last_question = None
+                        continue  # bỏ câu trả lời rỗng
                     current["Interview"].append({
                         "question": last_question,
                         "answer": value
